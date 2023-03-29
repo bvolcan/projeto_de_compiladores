@@ -1,0 +1,18 @@
+main{
+    var bool testeA;
+    var int cont;
+    testeA := False;
+    cont := 0;
+
+    do {
+        cont := (cont + 1);
+        if ((cont > 5)) {
+            testeA := True;
+        };
+        if (testeA) {
+            cont := (cont * ((0 - 1) * (cont + 1)));
+        };
+    } while((cont < 11));
+    print(cont);
+    return cont; 
+}

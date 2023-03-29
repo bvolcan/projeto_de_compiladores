@@ -1,0 +1,9 @@
+main{
+    var int x;
+    x := x + 10;
+    if (x > 10) {
+        print(10);
+        return;
+    };
+    print(x);
+}

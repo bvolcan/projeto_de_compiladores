@@ -1,0 +1,174 @@
+PARSER_BEGIN(Lugosi)
+import java.io.*;
+public class Lugosi {
+
+  public static void main(String args[]) throws ParseException,IOException {
+    
+ Lugosi analisador = new Lugosi(new FileInputStream(args[0]));
+ analisador.Lugosi();
+  }
+
+}
+
+PARSER_END(Lugosi)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <MAIN: "main">
+| <ACHAVES: "{">
+| <FCHAVES: "}">
+| <PONTOEVIRGULA: ";">
+| <APARENTESES: "(">
+| <FPARENTESES: ")">
+| <ATRIBUI: ":=">
+| <VAR: "var">
+| <INT: "int">
+| <FLOAT: "float">
+| <VOID: "void">
+| <BOOL: "bool">
+| <PRINT: "print">
+| <SOMA: "+">
+| <SUBTRAI: "-">
+| <MULTIPLICA: "*">
+| <DIVIDE: "/">
+| <ELOGICO: "&&">
+| <OULOGICO: "||">
+| <MENORQUE: "<">
+| <MAIORQUE: ">">
+| <IGUALA: "==">
+| <IF: "if">
+| <ELSE: "else">
+| <DO: "do">
+| <WHILE: "while">
+| <RETURN: "return">
+| <FUNCTION: "function">
+
+}
+
+TOKEN :
+{
+  <NUM : (["0"-"9"])+ ("."(["0"-"9"])+)? ("E" ("+" | "-")? (["0"-"9"])+)? >
+ |<ID: ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9"])* ((("_")*(["a"-"z","A"-"Z","0"-"9"])*)*)*>
+ |<BOOLVALUE: "False"|"True">
+
+}
+
+
+
+void Lugosi () :
+{}
+{
+
+<MAIN> <ACHAVES> Vardecl() SeqComandos() <FCHAVES>
+(Func())?
+<EOF> 
+
+}
+
+void Vardecl () :
+{}
+{
+
+  (<VAR> Tipos() <ID> <PONTOEVIRGULA>)*
+
+}
+
+void Tipos () :
+{}
+{
+
+  <INT> | <BOOL> | <FLOAT> | <VOID>
+
+}
+
+void SeqComandos () :
+{}
+{
+
+  (Comandos())*
+
+}
+
+void Comandos () :
+{}
+{
+
+  (
+    <ID> ComandoL()
+    |<IF> <APARENTESES> Exp() <FPARENTESES> <ACHAVES> SeqComandos() <FCHAVES>
+    |<WHILE> <APARENTESES> Exp() <FPARENTESES> <DO> <ACHAVES> SeqComandos() <FCHAVES>
+    |<DO> <ACHAVES> SeqComandos() <FCHAVES> <WHILE> <APARENTESES> Exp() <FPARENTESES>
+    |<RETURN> Exp()
+    |<PRINT> <APARENTESES> Exp() <FPARENTESES>
+  ) <PONTOEVIRGULA>
+}
+
+void ComandoL () :
+{}
+{
+
+  <ATRIBUI> Exp()
+  |<APARENTESES> ListaExp() <FPARENTESES>
+
+}
+
+void ListaExp () :
+{}
+{
+
+  Exp() ("," Exp())*
+
+}
+
+void Exp () :
+{}
+{
+
+  <APARENTESES> Exp() Operador() Exp() <FPARENTESES> | Fator()
+
+}
+
+void Operador () :
+{}
+{
+
+  <SOMA> | <SUBTRAI> | <MULTIPLICA> | <DIVIDE> | <ELOGICO> | <OULOGICO> | <MENORQUE> | <MAIORQUE> | <IGUALA>
+
+}
+
+void Fator () :
+{}
+{
+
+  <ID> (<APARENTESES> (ListaExp())? <FPARENTESES>)?
+  |<NUM>
+  |<BOOLVALUE>
+
+}
+
+void Func () :
+{}
+{
+
+  (<FUNCTION> Tipos() <ID> <APARENTESES> (ListaArg())? <FPARENTESES> <ACHAVES> Vardecl() SeqComandos() <FCHAVES>)+
+
+}
+
+void ListaArg () :
+{}
+{
+
+  (",")* Tipos() <ID>
+
+}
+
+
+

@@ -1,0 +1,103 @@
+PARSER_BEGIN(Lugosi)
+import java.io.*;
+public class Lugosi {
+
+  public static void main(String args[]) throws ParseException,IOException {
+    
+ Lugosi analisador = new Lugosi(new FileInputStream(args[0]));
+ analisador.Lugosi();
+  }
+
+}
+
+PARSER_END(Lugosi)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <MAIN: "main">
+| <ACHAVES: "{">
+| <FCHAVES: "}">
+| <PONTOEVIRGULA: ";">
+| <APARENTESES: "(">
+| <FPARENTESES: ")">
+| <ATRIBUI: ":=">
+| <VAR: "var">
+| <INT: "int">
+| <BOOL: "bool">
+| <PRINT: "print">
+| <SOMA: "+">
+| <SUBTRAI: "-">
+| <MULTIPLICA: "*">
+| <DIVIDE: "/">
+| <ELOGICO: "&&">
+| <OULOGICO: "||">
+| <MENORQUE: "<">
+| <MAIORQUE: ">">
+| <IGUALA: "==">
+| <IF: "if">
+| <ELSE: "else">
+| <DO: "do">
+| <WHILE: "while">
+| <RETURN: "return">
+
+}
+
+TOKEN :
+{
+  <NUM : (["0"-"9"])+>
+ |< ID: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"])*>
+
+}
+
+
+
+void Lugosi () :
+{Token t;}
+{
+
+(
+  <MAIN> { System.out.println("Palavra reservada: main");}
+| <ACHAVES> { System.out.println("Abre chaves: {");}
+| <FCHAVES> { System.out.println("Fecha chaves: }");}
+| <PONTOEVIRGULA> { System.out.println("Ponto e virgula: ;");}
+| <APARENTESES> { System.out.println("Abre parênteses: (");}
+| <FPARENTESES> { System.out.println("Fecha parênteses: )");}
+| <ATRIBUI> { System.out.println("Atribuição: :=");}
+| <VAR> { System.out.println("Palavra reservada: var");}
+| <INT> { System.out.println("Palavra reservada: int");}
+| <BOOL> { System.out.println("Palavra reservada: bool");}
+| <PRINT> { System.out.println("Palavra reservada: print");}
+| <SOMA> { System.out.println("Soma: +");}
+| <SUBTRAI> { System.out.println("Subtrai: -");}
+| <MULTIPLICA> { System.out.println("Multiplica: *");}
+| <DIVIDE> { System.out.println("Divide: /");}
+| <ELOGICO> { System.out.println("E lógico: &&");}
+| <OULOGICO> { System.out.println("Ou lógico: ||");}
+| <MENORQUE> { System.out.println("Menor que: <");}
+| <MAIORQUE> { System.out.println("Maior que: >");}
+| <IGUALA> { System.out.println("Igual a: ==");}
+| <IF> { System.out.println("Palavra reservada: if");}
+| <ELSE> { System.out.println("Palavra reservada: else");}
+| <DO> { System.out.println("Palavra reservada: do");}
+| <WHILE> { System.out.println("Palavra reservada: while");}
+| <RETURN> { System.out.println("Palavra reservada: return");}
+| t=<NUM> { System.out.println("Número: "+ t.image);}
+| t=<ID> { System.out.println("Identificador: "+ t.image);}
+)*
+<EOF> 
+
+
+}
+
+
+
+
+
