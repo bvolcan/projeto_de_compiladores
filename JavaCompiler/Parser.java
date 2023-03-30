@@ -2,7 +2,6 @@ class Parser{
 
 	AnaliseLexica scanner;
 	
-
 	Parser(AnaliseLexica s)
 	{
 		scanner = s;
@@ -23,10 +22,9 @@ class Parser{
 	Exp Exp() throws Exception
 	{       Exp exp1, exp2;
 		Token tokenCorrente =  scanner.getNextToken();
-
+		
 		if(tokenCorrente.token == TokenType.NUM)
 			return new Num(Integer.parseInt(tokenCorrente.lexema+""));
-		
 		
 		if(tokenCorrente.token == TokenType.APar)
 			{
@@ -55,16 +53,20 @@ class Parser{
 		//return null;
 		
 	}
-
 	Operador Op () throws Exception
 		{
 		
 		Token tokenCorrente = scanner.getNextToken();
+		
 		switch(tokenCorrente.token){
 			case SOMA:
 				return new Soma(null,null);
 			case MULT:
 				return new Mult(null,null);
+			case SUB:
+				return new Sub(null,null);
+			case DIV:
+				return new Div(null,null);
 			default: 
 		}
 		return null;
