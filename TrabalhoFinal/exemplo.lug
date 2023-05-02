@@ -1,0 +1,12 @@
+main{
+    var int count;
+    var int x;
+    count := 0;
+
+    do {
+        count := (count + inverte_sinal(1));
+    } while((count < inverte_sinal(x)));
+}
+function int inverte_sinal(int x){
+    return ((0 - 1) * x);
+}

@@ -1,0 +1,423 @@
+// Compilador Lugosi para Python
+// Todos os "toString" devem retornar o código em python
+
+PARSER_BEGIN(Lugosi)
+import java.io.*;
+import java.util.ArrayList;
+
+class LugosiA {
+    ArrayList<Comando> listaComandos;
+    ArrayList<Func> listaFunc;
+
+    LugosiA (ArrayList<Comando> listaComandos, ArrayList<Func> listaFunc) {
+        this.listaComandos = listaComandos;
+        this.listaFunc = listaFunc;
+    }
+
+    public String toString(){
+      String targetCode = "";
+      if(listaFunc.size() > 0){
+        for (int i = 0; i < listaFunc.size(); i++) {
+          targetCode += listaFunc.get(i).toString();
+        }
+      }
+      for (int i = 0; i < listaComandos.size(); i++) {
+        targetCode += listaComandos.get(i).toString();
+      }
+      return targetCode;
+    }
+}
+
+class Valor {}
+
+class Exp extends Valor{
+  Valor exp1;
+  Valor exp2;
+  Chamadafuncao chamadafuncao;
+  String operador;
+
+  Exp (Valor exp1, Valor exp2, Chamadafuncao chamadafuncao, String operador) {
+      this.exp1 = exp1;
+      this.exp2 = exp2;
+      this.chamadafuncao = chamadafuncao;
+      this.operador = operador;
+  }
+
+  public String toString(){
+    if (chamadafuncao != null) {
+      return chamadafuncao.toString();
+    }
+    if (exp2 == null) {
+      return exp1.toString();
+    }
+    if (operador == null) {
+      return exp1.toString() + " " + exp2.toString();
+    }
+    return exp1.toString() + " " + operador + " " + exp2.toString();
+  }
+}
+
+class Var extends Valor {
+    String id;
+
+    Var (String id) {
+        this.id = id;
+    }
+
+    public String toString(){
+      return id;
+    }
+}
+
+class ValorF extends Valor {
+  String valor;
+
+  ValorF (String valor) {
+      this.valor = valor;
+  }
+
+  public String toString(){
+    return valor;
+  }
+}
+
+class Comando {}
+
+class Atrib extends Comando {
+    Var id;
+    Exp exp;
+
+    Atrib (Var id, Exp exp) {
+        this.id = id;
+        this.exp = exp;
+    }
+
+    public String toString(){
+      return id + " = " + exp.toString() + "\n";
+    }
+}
+
+class Chamadafuncao extends Comando {
+    Var id;
+    ArrayList<Exp> listaexp;
+
+    Chamadafuncao (Var id, ArrayList<Exp> listaexp) {
+        this.id = id;
+        this.listaexp = listaexp;
+    }
+
+    public String toString(){
+      String targetCode = id + "(";
+      for (int i = 0; i < listaexp.size(); i++) {
+        targetCode += listaexp.get(i).toString();
+        if (i < listaexp.size() - 1) {
+          targetCode += ", ";
+        }
+      }
+      targetCode += ")";
+      return targetCode;
+    }
+}
+
+class If extends Comando {
+    Exp exp;
+    ArrayList<Comando> seqcomandos;
+
+    If (Exp exp, ArrayList<Comando> seqcomandos) {
+        this.exp = exp;
+        this.seqcomandos = seqcomandos;
+    }
+
+    public String toString(){
+      String targetCode = "if(" + exp.toString() + "):\n";
+      for (int i = 0; i < seqcomandos.size(); i++) {
+        targetCode += "\t";
+        targetCode += seqcomandos.get(i).toString();
+      }
+      return targetCode;
+    }
+}
+
+class Else extends Comando {
+    ArrayList<Comando> seqcomandos;
+
+    Else (Exp exp, ArrayList<Comando> seqcomandos) {
+        this.seqcomandos = seqcomandos;
+    }
+
+    public String toString(){
+      String targetCode = "else:\n";
+      for (int i = 0; i < seqcomandos.size(); i++) {
+        targetCode += "\t";
+        targetCode += seqcomandos.get(i).toString();
+      }
+      return targetCode;
+    }
+}
+
+class While extends Comando {
+    Exp exp;
+    ArrayList<Comando> seqcomandos;
+
+    While (Exp exp, ArrayList<Comando> seqcomandos) {
+        this.exp = exp;
+        this.seqcomandos = seqcomandos;
+    }
+
+    public String toString(){
+      String targetCode = "while(" + exp.toString() + "):\n";
+      for (int i = 0; i < seqcomandos.size(); i++) {
+        targetCode += "\t" + seqcomandos.get(i).toString() + '\n';
+      }
+      return targetCode;
+    }
+}
+
+class DoWhile extends Comando {
+    Exp exp;
+    ArrayList<Comando> seqcomandos;
+
+    DoWhile (Exp exp, ArrayList<Comando> seqcomandos) {
+        this.exp = exp;
+        this.seqcomandos = seqcomandos;
+    }
+
+    public String toString(){
+      String targetCode = "while True:\n";
+      for (int i = 0; i < seqcomandos.size(); i++) {
+        targetCode += "\t" + seqcomandos.get(i).toString();
+      }
+      targetCode += "\tif(" + exp.toString() + "):\n\t\tbreak\n";
+      return targetCode;
+    }
+}
+
+class Return extends Comando {
+    Exp exp;
+
+    Return (Exp exp) {
+        this.exp = exp;
+    }
+
+    public String toString(){
+      return "return " + exp.toString();
+    }
+}
+
+class Print extends Comando {
+    Exp exp;
+
+    Print (Exp exp) {
+        this.exp = exp;
+    }
+
+    public String toString(){
+      return "print(" + exp.toString() + ")";
+    }
+}
+
+class Func{
+  String id;
+  ArrayList<Var> listaParametros;
+  ArrayList<Comando> listaComandos;
+
+  Func (String id,ArrayList<Var> listaParametros, ArrayList<Comando> listaComandos) {
+      this.id = id;
+      this.listaParametros = listaParametros;
+      this.listaComandos = listaComandos;
+  }
+
+  public String toString(){
+    String targetCode = "def " + id + "(";
+      if(listaParametros.size() > 0) {
+        for (int i = 0; i < listaParametros.size(); i++) {
+        targetCode += listaParametros.get(i).toString();
+        if (i < listaParametros.size() - 1) {
+          targetCode += ", ";
+        }
+      }
+    }
+    targetCode += "):\n";
+    for (int i = 0; i < listaComandos.size(); i++) {
+      targetCode += "\t";
+      targetCode += listaComandos.get(i).toString() + "\n";
+    }
+    return targetCode;
+  }
+}
+
+
+public class Lugosi {
+
+  public static void main(String args[]) throws ParseException,IOException {
+    
+ Lugosi analisador = new Lugosi(new FileInputStream(args[0]));
+ LugosiA arvore = analisador.Lugosi();
+ System.out.println(arvore);
+  }
+
+}
+
+PARSER_END(Lugosi)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <MAIN: "main">
+| <ACHAVES: "{">
+| <FCHAVES: "}">
+| <PONTOEVIRGULA: ";">
+| <APARENTESES: "(">
+| <FPARENTESES: ")">
+| <ATRIBUI: ":=">
+| <VAR: "var">
+| <INT: "int">
+| <FLOAT: "float">
+| <VOID: "void">
+| <BOOL: "bool">
+| <PRINT: "print">
+| <SOMA: "+">
+| <SUBTRAI: "-">
+| <MULTIPLICA: "*">
+| <DIVIDE: "/">
+| <ELOGICO: "&&">
+| <OULOGICO: "||">
+| <MENORQUE: "<">
+| <MAIORQUE: ">">
+| <IGUALA: "==">
+| <IF: "if">
+| <ELSE: "else">
+| <DO: "do">
+| <WHILE: "while">
+| <RETURN: "return">
+| <FUNCTION: "function">
+
+}
+
+TOKEN :
+{
+  <NUM : (["0"-"9"])+ ("."(["0"-"9"])+)? ("E" ("+" | "-")? (["0"-"9"])+)? >
+ |<ID: ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9"])* ((("_")*(["a"-"z","A"-"Z","0"-"9"])*)*)*>
+ |<BOOLVALUE: "False"|"True">
+
+}
+
+
+
+LugosiA Lugosi () :
+{ArrayList comandos=new ArrayList(); ArrayList listaFunc=new ArrayList();}
+{
+
+<MAIN> <ACHAVES> Vardecl() SeqComandos(comandos) <FCHAVES>
+(Func(listaFunc))?
+<EOF> 
+
+{ return new LugosiA(comandos,listaFunc); }
+
+}
+
+void Vardecl () :
+{}
+{
+
+  (<VAR> Tipos() <ID> <PONTOEVIRGULA>)*
+
+}
+
+void Tipos () :
+{}
+{
+
+  <INT> | <BOOL> | <FLOAT> | <VOID>
+
+}
+
+void SeqComandos (ArrayList comandos) :
+{}
+{
+
+  (Comandos(comandos))*
+}
+
+void Comandos (ArrayList comandos) :
+{Token id=null; Exp exp=null;Var var=null; ArrayList listaExp=new ArrayList(); Comando result=null; ArrayList comandosLocal = new ArrayList(); Comando atrib=null;}
+{
+
+  ((
+    id=<ID>{var=new Var(id.image);} atrib=ComandoL(var, listaExp) {result = (atrib == null) ? new Chamadafuncao(var,listaExp) : atrib;}
+    |<IF> <APARENTESES> exp=Exp() <FPARENTESES> <ACHAVES> SeqComandos(comandosLocal) <FCHAVES> {result = new If(exp,comandosLocal);}
+    |<WHILE> <APARENTESES> exp=Exp() <FPARENTESES> <DO> <ACHAVES> SeqComandos(comandosLocal) <FCHAVES> {result = new While(exp,comandosLocal);}
+    |<DO> <ACHAVES> SeqComandos(comandosLocal) <FCHAVES> <WHILE> <APARENTESES> exp=Exp() <FPARENTESES> {result = new DoWhile(exp,comandosLocal);}
+    |<RETURN> exp=Exp() {result = new Return(exp);}
+    |<PRINT> <APARENTESES> exp=Exp() <FPARENTESES> {result = new Print(exp);}
+  ) <PONTOEVIRGULA>)
+  {comandos.add(result);}
+}
+
+Comando ComandoL (Var var, ArrayList exps) :
+{Exp exp=null;}
+{
+
+  <ATRIBUI> exp=Exp() {return new Atrib(var, exp);}
+  |<APARENTESES> ListaExp(exps) <FPARENTESES> {return null;}
+
+}
+
+void ListaExp (ArrayList exps) :
+{Exp exp=null;}
+{
+
+  exp=Exp() {exps.add(exp);} ("," exp=Exp() {exps.add(exp);})*
+
+}
+
+Exp Exp () :
+{Exp expA=null; Exp expB=null; String operador=null; Valor valor=null;}
+{
+
+  <APARENTESES> expA=Exp() operador=Operador() expB=Exp() <FPARENTESES>{return new Exp(expA, expB, null, operador);} | valor=Fator(){return new Exp(valor,null,null,null);}
+}
+
+String Operador () :
+{Token operador;}
+{
+
+  (operador=<SOMA>| operador=<SUBTRAI> | operador=<MULTIPLICA> | operador=<DIVIDE> | operador=<ELOGICO> | operador=<OULOGICO> | operador=<MENORQUE> | operador=<MAIORQUE> | operador=<IGUALA>)
+  {return operador.image;}
+}
+
+Valor Fator () :
+{Token fator=null; Token id=null; ArrayList exps=new ArrayList(); Chamadafuncao func=null;Valor result=null;}
+{
+  ((fator=<ID> {result=new Var(fator.image);} (<APARENTESES> (ListaExp(exps))? <FPARENTESES>{func= new Chamadafuncao(new Var(fator.image),exps); result = new Exp(null,null,func,null);})?)
+  |(fator=<NUM> {result=new ValorF(fator.image);})
+  |(fator=<BOOLVALUE> {result=new ValorF(fator.image);}))
+
+  {return result;}
+}
+
+void Func (ArrayList func) :
+{ Token id=null; ArrayList<Var> listaParametros=new ArrayList(); ArrayList<Comando> listaComandos=new ArrayList();}
+{
+
+  (<FUNCTION> Tipos() id=<ID> <APARENTESES> (ListaArg(listaParametros))? <FPARENTESES> <ACHAVES> Vardecl() SeqComandos(listaComandos) <FCHAVES>)+
+  {func.add(new Func(id.image,listaParametros,listaComandos));}
+}
+
+void ListaArg (ArrayList listaParametros) :
+{Token id=null;}
+{
+
+  (",")* Tipos() id=<ID>
+  {listaParametros.add(new Var(id.image));}
+}
+
+
+
