@@ -415,8 +415,7 @@ void ListaArg (ArrayList listaParametros) :
 {Token id=null;}
 {
 
-  (",")* Tipos() id=<ID>
-  {listaParametros.add(new Var(id.image));}
+  Tipos() id=<ID> {listaParametros.add(new Var(id.image));} ("," Tipos() id=<ID> {listaParametros.add(new Var(id.image));})* 
 }
 
 
