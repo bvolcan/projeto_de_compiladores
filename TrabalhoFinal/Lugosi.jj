@@ -114,7 +114,7 @@ class Chamadafuncao extends Comando {
           targetCode += ", ";
         }
       }
-      targetCode += ")";
+      targetCode += ")\n";
       return targetCode;
     }
 }
@@ -187,7 +187,7 @@ class DoWhile extends Comando {
       for (int i = 0; i < seqcomandos.size(); i++) {
         targetCode += "\t" + seqcomandos.get(i).toString();
       }
-      targetCode += "\tif(" + exp.toString() + "):\n\t\tbreak\n";
+      targetCode += "\tif not(" + exp.toString() + "):\n\t\tbreak\n";
       return targetCode;
     }
 }
@@ -212,7 +212,7 @@ class Print extends Comando {
     }
 
     public String toString(){
-      return "print(" + exp.toString() + ")";
+      return "print(" + exp.toString() + ")\n";
     }
 }
 
