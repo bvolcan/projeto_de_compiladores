@@ -2,11 +2,13 @@ main{
     var int count;
     var int x;
     count := 0;
+    x := 3;
 
     do {
-        count := (count + inverte_sinal(1));
-    } while((count < inverte_sinal(x)));
+        count := soma_um(count);
+        print(count);
+    } while((count < x));
 }
-function int inverte_sinal(int x){
-    return ((0 - 1) * x);
+function int soma_um(int x){
+    return (x + 1);
 }
