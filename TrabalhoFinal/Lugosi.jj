@@ -423,8 +423,7 @@ void Func (ArrayList func) :
 { Token id=null; ArrayList<Var> listaParametros=new ArrayList(); ArrayList<Comando> listaComandos=new ArrayList();}
 {
 
-  (<FUNCTION> Tipos() id=<ID> <APARENTESES> (ListaArg(listaParametros))? <FPARENTESES> <ACHAVES> Vardecl() SeqComandos(listaComandos) <FCHAVES>)+
-  {func.add(new Func(id.image,listaParametros,listaComandos));}
+  ({listaComandos=new ArrayList();listaParametros=new ArrayList();}<FUNCTION> Tipos() id=<ID> <APARENTESES> (ListaArg(listaParametros))? <FPARENTESES> <ACHAVES> Vardecl() SeqComandos(listaComandos) <FCHAVES> {func.add(new Func(id.image,listaParametros,listaComandos));})+
 }
 
 void ListaArg (ArrayList listaParametros) :
