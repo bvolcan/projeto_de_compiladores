@@ -250,10 +250,26 @@ class Func{
 public class Lugosi {
 
   public static void main(String args[]) throws ParseException,IOException {
+
+    Lugosi analisador = new Lugosi(new FileInputStream(args[0]));
+    LugosiA arvore = analisador.Lugosi();
+    System.out.println(arvore);
     
- Lugosi analisador = new Lugosi(new FileInputStream(args[0]));
- LugosiA arvore = analisador.Lugosi();
- System.out.println(arvore);
+    OutputStream output = new FileOutputStream("main.py");
+    
+    String s = arvore.toString();
+
+    int length = s.length()-1;
+    int count = 0;
+
+    while (count < length) {
+
+      output.write(s.charAt(count));
+
+      count++;
+    }
+                    
+    output.close();
   }
 
 }
