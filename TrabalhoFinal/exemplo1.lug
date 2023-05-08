@@ -1,0 +1,23 @@
+main{
+    var int x;
+    var int y;
+
+    var int res1;
+    var int res2;
+
+    x := 3;
+    y := 2;
+
+    res1 := soma(x, y);
+    res2 := multiplica(x, y);
+
+    print(res1);
+    print(res2);
+}
+function int soma(int x, int y){
+    return (x + y);
+}
+
+function int multiplica(int z, int w){
+    return (z * w);
+}

@@ -3,3 +3,6 @@ build:
 
 run:
 	java -cp ./ClassDump Lugosi exemplo.lug
+
+exemplo2:
+	java -cp ./ClassDump Lugosi exemplo1.lug
